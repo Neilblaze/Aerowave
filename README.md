@@ -1,5 +1,8 @@
 ![Aerowave](https://raw.githubusercontent.com/Neilblaze/Aerowave/reader/main_logo.png)
 
+
+# Root Repo : https://github.com/sandipndev/aerowave
+
 ## Background
 𝐂𝐨𝐯𝐢𝐝-𝟏𝟗 has turned all of our lives upsides down. It's 2021 & currently, we are standing in front of the second wave of the same. Because of that, the concept of contact-less methods is growing quite rapidly. But unfortunately, there are few scopes where we are still lacking the option, for example, ATM, Stores, Malls, Reservation Counters, Airports, etc. In terms of ATM, **access to cash for many in society is remaining essential during the current lockdown around the globe.** This is because, it requires a touch, be it either the note or the machine, which certainly is a major source of spreading Coronavirus in the public. This chain needs to be stopped before it's too late.
 
