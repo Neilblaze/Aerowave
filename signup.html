@@ -10,6 +10,125 @@
   <link rel="mask-icon" href="media/favicon.svg" color="rgb(36,38,58)">
   <link rel="shortcut icon" href="media/favicon.png">
   <link rel="stylesheet" href="css/main.css">
+  <!-- Material Design Theming -->
+  <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.orange-indigo.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+  <!-- Google Sign In -->
+  <script type="text/javascript">
+    /**
+     * Function called when clicking the Login/Logout button.
+     */
+    function toggleSignInGoogle() {
+      if (!firebase.auth().currentUser) {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+        firebase.auth().signInWithPopup(provider).then(function(result) {
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = result.credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          document.getElementById('quickstart-oauthtoken').textContent = token;
+        }).catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // The email of the user's account used.
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
+          if (errorCode === 'auth/account-exists-with-different-credential') {
+            alert('You have already signed up with a different auth provider for that email.');
+            // If you are using multiple auth providers on your app you should handle linking
+            // the user's accounts here.
+          } else {
+            console.error(error);
+          }
+        });
+      } else {
+        firebase.auth().signOut();
+      }
+      document.getElementById('quickstart-sign-in').disabled = true;
+    }
+
+    /**
+     * initApp handles setting up UI event listeners and registering Firebase auth listeners:
+     *  - firebase.auth().onAuthStateChanged: This listener is called when the user is signed in or
+     *    out, and that is where we update the UI.
+     */
+    function initApp() {
+      // Listening for auth state changes.
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          // User is signed in.
+          var displayName = user.displayName;
+          var email = user.email;
+          var emailVerified = user.emailVerified;
+          var photoURL = user.photoURL;
+          var isAnonymous = user.isAnonymous;
+          var uid = user.uid;
+          var providerData = user.providerData;
+          // document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
+          // document.getElementById('quickstart-sign-in').textContent = 'Sign out';
+          // document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
+          document.location.href="/";
+        } else {
+          // User is signed out.
+          document.getElementById('quickstart-sign-in').textContent = 'Sign in with Google';
+        }
+        document.getElementById('quickstart-sign-in').disabled = false;
+      });
+
+      document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignInGoogle, false);
+      document.getElementById('quickstart-sign-up').addEventListener('click', handleSignUpEmail, false);
+    }
+
+    /**
+     * Handles the sign up button press.
+     */
+    function handleSignUpEmail() {
+      var email = document.getElementById('email').value;
+      var password = document.getElementById('password').value;
+      if (email.length < 4) {
+        alert('Please enter an email address.');
+        return;
+      }
+      if (password.length < 4) {
+        alert('Please enter a password.');
+        return;
+      }
+      // Create user with email and pass.
+      firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        if (errorCode == 'auth/weak-password') {
+          alert('The password is too weak.');
+        } else {
+          alert(errorMessage);
+        }
+        console.log(error);
+      });
+    }
+
+
+
+    window.onload = function() {
+      var firebaseConfig = {
+        apiKey: "AIzaSyDdIG6Nphs_EAdKjVnh128h_cjl5IyTAjA",
+        authDomain: "aerowave-hacktech.firebaseapp.com",
+        projectId: "aerowave-hacktech",
+        storageBucket: "aerowave-hacktech.appspot.com",
+        messagingSenderId: "700883718076",
+        appId: "1:700883718076:web:e014497fe942a77b30e5b9",
+        measurementId: "G-6CZ0L27GZL"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+      initApp();
+    };
+  </script>
 </head>
 <body class="page page-onboarding preload">
 
@@ -21,7 +140,10 @@
       <div class="col-one-half middle padding">
         <div class="max-width-s">
           <h5>Welcome!</h5>
-          <p class="paragraph">Enter your details to create an account.</p>
+          <div class="center max-width-s space-top"> 
+            <!-- Button that handles sign-in/sign-out -->
+            <button disabled class="mdl-button mdl-js-button mdl-button--raised" id="quickstart-sign-in">Sign in with Google</button>
+          </div>
           <form>
             <div class="form-group">
               <label for="name">Name:</label>
@@ -35,7 +157,7 @@
               <label for="password">Password:</label>
               <input id="password" type="password" name="signup-password">
             </div>
-            <a href="#" class="button button-primary full-width space-top" role="button">Create Account</a>
+            <a class="button button-primary full-width space-top" role="button" id="quickstart-sign-up">Create Account</a>
           </form>
         </div>
         <div class="center max-width-s space-top">
@@ -46,6 +168,14 @@
 
   </main>
 
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+      https://firebase.google.com/docs/web/setup#available-libraries -->
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-analytics.js"></script>
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-auth.js"></script>
   <script src="js/jquery.min.js"></script>
   <script src="js/main.js"></script>
 </body>
